@@ -181,13 +181,13 @@ public class AnalyzerCore {
         for (RuleMatch rm : output.matches()) { // проходимся по каждому исправлению
             int offset = AnalyzerCore.getOffset(offsets, rm.getFromPos()); // получаем его смещение
             String part1 = outputText.substring(0, rm.getFromPos() + offset); // получаем текст перед исправлением
-            String source = output.inputText().substring(rm.getFromPos(), rm.getToPos()); // слово с ошибкой
-            String replacement = rm.getSuggestedReplacements().size() > 0 ? rm.getSuggestedReplacements().get(0) : source; // замена
-            AnalyzedRegion ar = new AnalyzedRegion( // создаем регион
-                    rm.getFromPos() + offset, // позиция
-                    source, // слово с ошибкой
-                    replacement, // текущая замена
-                    rm.getSuggestedReplacements() // другие замены
+            String source = output.inputText().substring(rm.getFromPos(), rm.getToPos()); 
+            String replacement = rm.getSuggestedReplacements().size() > 0 ? rm.getSuggestedReplacements().get(0) : source; 
+            AnalyzedRegion ar = new AnalyzedRegion( 
+                    rm.getFromPos() + offset, 
+                    source, 
+                    replacement, 
+                    rm.getSuggestedReplacements() 
             );
             ar.updatePosition(outputAreaBounds, outputAreaFont, part1); // обновляем позицию этого региона
             analyzedRegions.add(ar); // добавляем в список проанализированных регионов
