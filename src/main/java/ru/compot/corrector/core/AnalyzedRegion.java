@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class AnalyzedRegion {
     /**
-     * Смещение всех регионов по оси y в следствии скролла поля для вывода
+     * Смещение всех регионов по оси y вследствие скролла поля для вывода
      */
     public static double yOffset;
     /**
