@@ -47,7 +47,7 @@ public class AnalyzerCore {
 
     public AnalyzerCore() {
         try (FileInputStream fis = new FileInputStream(PREFERENCES_PATH + File.separator + "preferences.properties")) {
-            properties.load(fis); // загружаем сохраненные настройки
+            properties.load(fis);
         } catch (IOException ignored) {
         }
         // ---- создаем анализаторы ----
@@ -64,11 +64,11 @@ public class AnalyzerCore {
      * @return смещение символов
      */
     public static int getOffset(Map<Integer, Integer> offsets, int fromPosition) {
-        return offsets.keySet() // проходимся по ключам карты
-                .stream() // делаем из них поток
-                .filter(i -> fromPosition >= i) // фильтруем все позиции, которые больше или равны fromPosition
-                .mapToInt(offsets::get) // переделываем поток ключей в поток значений по этим ключам
-                .sum(); // получаем сумму смещений
+        return offsets.keySet() 
+                .stream() 
+                .filter(i -> fromPosition >= i) 
+                .mapToInt(offsets::get) 
+                .sum();
     }
 
     /**
@@ -85,7 +85,7 @@ public class AnalyzerCore {
         double regionY = outputAreaBounds.getMinY()
                 + (AreaUtils.getLinesInArea(outputAreaBounds, outputAreaFont, beforeText) - 1)
                 * (textBounds.getHeight() + 1); // вычисляем y
-        if (regionX + textBounds.getWidth() > outputAreaBounds.getWidth()) { // если x + размер текста больше чем длина поля для вывода
+        if (regionX + textBounds.getWidth() > outputAreaBounds.getWidth()) { // если (x + размер текста) больше чем длина поля для вывода
             regionX = outputAreaBounds.getMinX(); // x обнуляем
             regionY += textBounds.getHeight() + 1; // y переносим на новую строку
         }
@@ -173,14 +173,13 @@ public class AnalyzerCore {
      * Создает список проанализируемых регионов
      * @param output данные с метода analyze()
      * @param offsets смещения символов
-     * @param outputText исправленный текст
      * @param outputAreaBounds границы поля для вывода текста
      * @param outputAreaFont шрифт поля для вывода текста
      */
     public void applyAnalyzedRegions(AnalyzerOutput output, Map<Integer, Integer> offsets, String outputText, Bounds outputAreaBounds, Font outputAreaFont) {
-        for (RuleMatch rm : output.matches()) { // проходимся по каждому исправлению
-            int offset = AnalyzerCore.getOffset(offsets, rm.getFromPos()); // получаем его смещение
-            String part1 = outputText.substring(0, rm.getFromPos() + offset); // получаем текст перед исправлением
+        for (RuleMatch rm : output.matches()) {
+            int offset = AnalyzerCore.getOffset(offsets, rm.getFromPos());
+            String part1 = outputText.substring(0, rm.getFromPos() + offset);
             String source = output.inputText().substring(rm.getFromPos(), rm.getToPos()); 
             String replacement = rm.getSuggestedReplacements().size() > 0 ? rm.getSuggestedReplacements().get(0) : source; 
             AnalyzedRegion ar = new AnalyzedRegion( 
@@ -200,9 +199,9 @@ public class AnalyzerCore {
     public void save() {
         try {
             File file = new File(PREFERENCES_PATH + File.separator + "preferences.properties"); // получаем файл для сохранения
-            if (!file.exists()) { // если его не существует
-                file.getParentFile().mkdirs(); // создаем родительские папки
-                file.createNewFile(); // создаем новый файл
+            if (!file.exists()) {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
             }
             FileOutputStream fos = new FileOutputStream(file);
             properties.store(fos, null); // записываем
