@@ -28,84 +28,49 @@ import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
 
-    /**
-     * Главное окно
-     */
     private final Stage primaryStage;
-    /**
-     * Поле ввода
-     */
+ 
     @FXML
     private TextArea input;
-    /**
-     * Поле вывода
-     */
+  
     @FXML
     private TextArea output;
-    /**
-     * Текст на поле для вывода во время анализа
-     */
+ 
     @FXML
     private Group analyzeState;
-    /**
-     * Контекстное меню поля для ввода
-     */
+
     @FXML
     private ContextMenu outputContextMenu;
-    /**
-     * Группа со всеми подчеркиваниями
-     */
+  
     @FXML
     private Group linesGroup;
-    /**
-     * Кнопка открытия файла
-     */
+
     @FXML
     private Button openButton;
-    /**
-     * Кнопка анализа
-     */
+  
     @FXML
     private Button analyzeButton;
-    /**
-     * Кнопка сохранения
-     */
+  
     @FXML
     private Button saveButton;
-    /**
-     * Чекбокс в меню Preferences отвечающий за включение разделения текста на абзацы
-     */
+   
     @FXML
     private CheckMenuItem paragraphState;
-    /**
-     * Текст с количеством предложений в абзаце
-     */
+  
     @FXML
     private MenuItem sentencesLabel;
-    /**
-     * Слайдер для изменения кол-ва предложений в абзаце
-     */
+   
     @FXML
     private Slider sentencesSlider;
-    /**
-     * Чекбокс, отвечающий за включение анализа английского языка
-     */
+  
     @FXML
     private CheckMenuItem englishCheck;
     private AnalyzerCore core;
 
-    /**
-     * Папка последнего открытого файла
-     */
     private File savePath;
-    /**
-     * Название последнего открытого файла
-     */
+ 
     private String saveFile = "corrector-output";
 
-    /**
-     * Пропустить следущее событие изменения поля для ввода?
-     */
     private boolean skipOutputChangeEvent;
 
     public MainController(Stage primaryStage) {
@@ -115,15 +80,14 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         core = new AnalyzerCore();
-        // ---- загрузка сохраненной конфигурации ----
+        
         sentencesLabel.setText("Предложений в абзаце: " + core.getSentencesInParagraph()); // устанавливаем текст над слайдером кол-ва предложений в абзаце в меню Настроек
         sentencesSlider.setValue(core.getSentencesInParagraph());
         paragraphState.setSelected(core.isParagraphsEnabled()); // устанавливаем сохраненное значение разделения текста на абзацы
-        englishCheck.setSelected(core.isEnglishEnabled()); // устанавливаем сохраненное значение анализа английского языка
-
-        // ---- иницализация отловщиков событий ----
+        englishCheck.setSelected(core.isEnglishEnabled());
+        
         output.textProperty().addListener(((observable, oldValue, newValue) -> { // отловщик события изменения текста в поле для вывода
-            if (skipOutputChangeEvent) { // если мы скипаем событие обновления
+            if (skipOutputChangeEvent) {
                 skipOutputChangeEvent = false;
                 return; // скипаем его
             }
@@ -132,9 +96,9 @@ public class MainController implements Initializable {
             }
         }));
         output.scrollTopProperty().addListener(((observable, oldValue, newValue) -> { // отловщик события скролла поля для вывода
-            AnalyzedRegion.yOffset = -newValue.doubleValue(); // изменяем смещение всех регионов на экране по оси y
+            AnalyzedRegion.yOffset = -newValue.doubleValue();
         }));
-        sentencesSlider.valueProperty().addListener((observable, oldValue, newValue) -> // отловщик события изменения слайдера
+        sentencesSlider.valueProperty().addListener((observable, oldValue, newValue) ->
                 sentencesLabel.setText("Предложений в абзаце: " + newValue.intValue()));
         Runtime.getRuntime().addShutdownHook(new Thread(() -> core.save()));
     }
@@ -157,36 +121,30 @@ public class MainController implements Initializable {
                             && y <= r.y + AnalyzedRegion.yOffset + r.height; // получаем те, на которые было произведено нажатие
                 }).toList();
         outputContextMenu.getItems().clear();
-        regions.forEach(r -> { // проходимся по полученным регионам
-            Menu menu = new Menu(r.replacement); // создаем меню
+        regions.forEach(r -> {
+            Menu menu = new Menu(r.replacement);
             MenuItem mi = addListenerToMenuItem(new MenuItem(r.source), r.source, r);
             menu.getItems().add(mi);
             r.allReplacements.forEach(rep -> menu.getItems().add(addListenerToMenuItem(new MenuItem(rep), rep, r)));
             outputContextMenu.getItems().add(menu); // добавляем в контекстное меню
         });
     }
-
-    /**
-     * Вешает на кнопку в меню обработчик нажатия
-     * @param mi кнопка
-     * @param replacement замена
-     * @param region регион
-     */
+    
     private MenuItem addListenerToMenuItem(MenuItem mi, String replacement, AnalyzedRegion region) {
         mi.addEventHandler(ActionEvent.ANY, me -> {
-            String oldReplacement = region.replacement; // получаем предыдущую замену
-            region.replacement = replacement; // определяем новую замену в регионе
+            String oldReplacement = region.replacement;
+            region.replacement = replacement; 
 
             String part1 = output.getText(0, region.from); // получаем текст до региона
-            String part2 = output.getText(region.from + oldReplacement.length(), output.getLength()); // получаем текст после региона
-            skipOutputChangeEvent = true; // скипаем след событие изменения поля для вывода
+            String part2 = output.getText(region.from + oldReplacement.length(), output.getLength()); 
+            skipOutputChangeEvent = true;
             output.setText(part1 + region.replacement + part2); // изменяем текст в поле для вывода
 
             Bounds areaBounds = output.lookup(".text").getBoundsInParent(); // получаем границы текстового поля дял вывода
-            region.updatePosition(areaBounds, output.getFont(), part1); // обновляем позицию региона
+            region.updatePosition(areaBounds, output.getFont(), part1);
             core.getAnalyzedRegions().stream() // создаем поток регионов
-                    .filter(r1 -> r1.from >= region.from && r1 != region) // фильтруем другие регионы, которые начинаются после данного региона
-                    .forEach(anotherRegion -> { // так же обновляем эти регионы
+                    .filter(r1 -> r1.from >= region.from && r1 != region)
+                    .forEach(anotherRegion -> { 
                         anotherRegion.from += region.replacement.length() - oldReplacement.length();
                         String anotherPart1 = output.getText(0, anotherRegion.from);
                         anotherRegion.updatePosition(areaBounds, output.getFont(), anotherPart1);
@@ -195,13 +153,10 @@ public class MainController implements Initializable {
         return mi;
     }
 
-    /**
-     * Отловщик события нажатия мышкой на кнопку анализа
-     */
     @FXML
     private void onAnalyzeClick() {
         setAnalyzeState(true); // говорим приложению, что анализ начался
-        core.getAnalyzedRegions().clear(); // очищаем предыдущие регионы
+        core.getAnalyzedRegions().clear(); 
         output.setText(input.getText()); // записываем в поле для вывода текст из поля для ввода
         Service<AnalyzerOutput> service = new Service<>() {
             @Override
@@ -215,15 +170,15 @@ public class MainController implements Initializable {
             }
         };
         service.setOnSucceeded((event) -> { // если поток был выполнен успешно
-            AnalyzerOutput out = service.getValue(); // получаем вывод
+            AnalyzerOutput out = service.getValue();
             if (out == null) {
                 output.setText("Ошибка при анализе текста");
                 SplashScreenUtils.displayInfoScreen(primaryStage, "error.png", "Fail", "Не удалось анализировать текст");
             } else { // иначе
-                ConcurrentHashMap<Integer, Integer> offsets = new ConcurrentHashMap<>(); // создаем карту смещений символов
-                calculateOffsetsAndApplyText(out, offsets); // заполняем карту смещений
-                Bounds areaBounds = output.lookup(".text").getBoundsInParent(); // получаем границы
-                core.applyAnalyzedRegions(out, offsets, output.getText(), areaBounds, output.getFont()); // вычисляем регионы
+                ConcurrentHashMap<Integer, Integer> offsets = new ConcurrentHashMap<>(); 
+                calculateOffsetsAndApplyText(out, offsets); 
+                Bounds areaBounds = output.lookup(".text").getBoundsInParent();
+                core.applyAnalyzedRegions(out, offsets, output.getText(), areaBounds, output.getFont()); 
                 SplashScreenUtils.displayInfoScreen(primaryStage, "success.png", "Success", "Текст обработан успешно!");
             }
             setAnalyzeState(false); 
@@ -231,11 +186,7 @@ public class MainController implements Initializable {
         service.start();
     }
 
-    /**
-     * Метод вычисления смещений символов и изменения текста поля для вывода
-     * @param out вывод анализатора
-     * @param offsets карта смещений
-     */
+
     private void calculateOffsetsAndApplyText(AnalyzerOutput out, ConcurrentHashMap<Integer, Integer> offsets) {
         out.matches().forEach(rm -> {
             int offset = AnalyzerCore.getOffset(offsets, rm.getFromPos()); 
@@ -260,12 +211,12 @@ public class MainController implements Initializable {
      * @param state анализируется ли сейчас текст или нет
      */
     private void setAnalyzeState(boolean state) {
-        openButton.setDisable(state); // (раз)блокируем кнопку открытия файла
-        analyzeButton.setDisable(state); // (раз)блокируем кнопку анализа
-        saveButton.setDisable(state); // (раз)блокируем кнопку сохранения файла
-        input.setDisable(state); // (раз)блокируем поле для ввода текста
-        output.setDisable(state); // (раз)блокируем поле для вывода текста
-        analyzeState.setVisible(state); // показываем/прячем текст анализируем.. над полем для вывода
+        openButton.setDisable(state); 
+        analyzeButton.setDisable(state); 
+        saveButton.setDisable(state);
+        input.setDisable(state); 
+        output.setDisable(state);
+        analyzeState.setVisible(state);
     }
 
     /**
