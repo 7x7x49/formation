@@ -1,5 +1,6 @@
 package ru.compot.corrector.utils;
 
+
 import javafx.geometry.Bounds;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
