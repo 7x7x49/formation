@@ -1,5 +1,6 @@
 package ru.compot.corrector.utils.splash;
 
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
