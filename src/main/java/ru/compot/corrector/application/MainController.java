@@ -276,15 +276,6 @@ public class MainController implements Initializable {
     }
 
     /**
-     * Отловщик события нажатия мышкой на кнопку New в меню File
-     */
-    @FXML
-    private void onNewClick() {
-        input.setText("");
-        output.setText("");
-    }
-
-    /**
      * Отловщик события нажатия мышкой на чекбокс Разделение на абзацы в меню Preferences
      */
     @FXML
