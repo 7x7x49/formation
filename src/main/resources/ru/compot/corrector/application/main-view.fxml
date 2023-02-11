@@ -51,7 +51,7 @@
 
 <VBox prefHeight="440.0" prefWidth="655.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
     <AnchorPane prefHeight="440.0" prefWidth="655.0" VBox.vgrow="ALWAYS">
-        <Label alignment="TOP_CENTER" contentDisplay="BOTTOM" layoutX="182.0" layoutY="40.0" prefHeight="32.0" prefWidth="292.0" text="Форматирование текста" textAlignment="CENTER">
+        <Label alignment="TOP_CENTER" contentDisplay="BOTTOM" layoutX="182.0" layoutY="40.0" prefHeight="32.0" prefWidth="292.0" text="Пунктуационный редактор" textAlignment="CENTER">
             <font>
                 <Font size="20.0" />
             </font>
@@ -107,7 +107,7 @@
         </MenuBar>
         <Group fx:id="analyzeState" layoutX="371.0" layoutY="201.0" visible="false">
             <Rectangle arcHeight="20.0" arcWidth="20.0" fill="WHITE" height="74.0" opacity="0.95" stroke="#8d8c8c" strokeType="INSIDE" width="221.0" />
-            <Label layoutX="19.0" layoutY="18.0" text="Обрабатываем..." textFill="#797979">
+            <Label layoutX="19.0" layoutY="18.0" text="Редактируем..." textFill="#797979">
                 <font>
                     <Font size="27.0" />
                 </font>
