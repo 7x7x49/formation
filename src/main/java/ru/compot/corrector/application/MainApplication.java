@@ -19,7 +19,7 @@ public class MainApplication extends Application {
         fxmlLoader.setController(new MainController(stage));
         stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("icon.png")));
         Scene scene = new Scene(fxmlLoader.load(), 655, 440);
-        stage.setTitle("Пунктуационный редактор");
+        stage.setTitle("punctuation-editor");
         stage.setScene(scene);
         stage.show();
     }
